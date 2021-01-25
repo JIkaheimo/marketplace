@@ -1,0 +1,349 @@
+openapi: 3.0.0
+info:
+  title: marketplace
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /users:
+    post:
+      summary: Create New User
+      operationId: post-users
+      responses:
+        '201':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                New User Bob Fellow:
+                  value:
+                    id: 12
+                    firstName: Bob
+                    lastName: Fellow
+                    email: bob.fellow@gmail.com
+                    dateOfBirth: '1996-08-24'
+                    emailVerified: false
+                    createDate: '2020-11-18'
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples: {}
+        description: Post the necessary fields for the API to create a new user.
+      description: Creates a new user to the system.
+    parameters: []
+  /postings:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+      operationId: get-postings
+      parameters:
+        - $ref: '#/components/parameters/categories'
+    parameters: []
+    post:
+      summary: ''
+      operationId: create-posting
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting'
+      description: Creates and returns a new posting with the given parameters.
+  '/users/{userId}/postings/{postingId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: postingId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting'
+        '404':
+          description: Not Found
+      operationId: get-users-userId-postings-postingId
+  '/postings/{postingId}':
+    parameters:
+      - schema:
+          type: string
+        name: postingId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Posting'
+        '404':
+          description: Not Found
+      operationId: get-postings-postingId
+      description: Fetches the posting with the given id.
+    put:
+      summary: ''
+      operationId: put-postings-postingId
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: ''
+      operationId: delete-postings-postingId
+      responses:
+        '200':
+          description: OK
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    delete:
+      summary: Delete a specific user
+      operationId: delete-users-userId
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '404':
+          description: User with id not found.
+      security:
+        - HTTPBasic: []
+    get:
+      summary: Get information on a specific user
+      operationId: get-users-userId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      security:
+        - HTTPBasic: []
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: ''
+      x-examples:
+        example-1:
+          id: ia2131-assd51132-213123as
+          firstName: Jaakko
+          lastName: Ikäheimo
+          email: jikaheimo@testi.com
+          birthDate: '1994-08-05'
+          creationDate: '2020-08-24'
+          username: JIkaheimo
+          address:
+            street: Meripuistokatu 27 as 14
+            country: Finland
+            city: Kemi
+            postalCode: 94100
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the given user.
+        firstName:
+          type: string
+          description: First name of the user.
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        birthDate:
+          type: string
+          format: date
+          example: '1997-10-31'
+        creationDate:
+          type: string
+          format: date
+          description: The date that the user was created.
+        username:
+          type: string
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+            country:
+              type: string
+            city:
+              type: string
+            postalCode:
+              type: number
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+    Posting:
+      title: Posting
+      type: object
+      description: Posting describes an item to be sold in the marketplace
+      properties:
+        id:
+          type: number
+          description: Identification number of the posting
+        description:
+          type: string
+          description: Description of the posting
+        title:
+          type: string
+          description: Title of the posting
+        category:
+          $ref: '#/components/schemas/Category'
+        askingPrice:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        deliveryType:
+          type: string
+          enum:
+            - Shipping
+            - Pickup
+        seller:
+          $ref: '#/components/schemas/User'
+        location:
+          type: string
+        images:
+          type: string
+      required:
+        - id
+        - description
+        - title
+        - category
+        - askingPrice
+        - seller
+        - location
+    Category:
+      title: Category
+      type: object
+      properties:
+        id:
+          description: Identification number of the category
+          type: number
+        name:
+          type: string
+          description: Name of the category
+        description:
+          type: string
+          description: Description of the category
+    Location:
+      title: Location
+      type: object
+      properties:
+        city:
+          type: string
+        country:
+          type: string
+        id:
+          type: number
+      required:
+        - city
+        - country
+    CreatedUser:
+      title: CreatedUser
+      type: object
+      properties:
+        id:
+          type: string
+  parameters:
+    categories:
+      name: categories
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: Returns postings based on the given category filter.
+    posted:
+      name: posted
+      in: query
+      required: false
+      schema:
+        type: string
+    location:
+      name: locaion
+      in: query
+      required: false
+      schema:
+        type: string
+  responses:
+    GET-Postings:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Posting'
+          examples:
+            example-1:
+              value:
+                - id: 0
+                  description: string
+                  title: string
+                  category:
+                    id: 0
+                    name: string
+                    description: string
+                  askingPrice: 0
+                  createdAt: '2019-08-24T14:15:22Z'
+                  deliveryType: Shipping
+                  seller:
+                    id: 0
+                    firstName: string
+                    lastName: string
+                    email: user@example.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    createdAt: '2019-08-24'
+                  location: string
+                  images: string
+        application/xml:
+          schema:
+            type: object
+            properties: {}
+        multipart/form-data:
+          schema:
+            type: object
+            properties: {}
+  securitySchemes:
+    HTTPBasic:
+      type: http
+      scheme: basic
+      description: ''
