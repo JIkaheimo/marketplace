@@ -39,14 +39,14 @@ paths:
         description: Post the necessary fields for the API to create a new user.
       description: Creates a new user to the system.
     parameters: []
-  /postings:
+  /posts:
     get:
       summary: Your GET endpoint
       tags: []
       responses:
         '200':
           description: OK
-      operationId: get-postings
+      operationId: get-posts
       parameters:
         - $ref: '#/components/parameters/categories'
     parameters: []
@@ -61,7 +61,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Posting'
       description: Creates and returns a new posting with the given parameters.
-  '/users/{userId}/postings/{postingId}':
+  '/users/{userId}/posts/{postId}':
     parameters:
       - schema:
           type: string
@@ -70,7 +70,7 @@ paths:
         required: true
       - schema:
           type: string
-        name: postingId
+        name: postId
         in: path
         required: true
     get:
@@ -86,11 +86,12 @@ paths:
         '404':
           description: Not Found
       operationId: get-users-userId-postings-postingId
-  '/postings/{postingId}':
+      description: ''
+  '/posts/{postId}':
     parameters:
       - schema:
           type: string
-        name: postingId
+        name: postId
         in: path
         required: true
     get:
@@ -209,7 +210,7 @@ components:
         - firstName
         - lastName
         - email
-    Posting:
+    Post:
       title: Posting
       type: object
       description: Posting describes an item to be sold in the marketplace
@@ -303,7 +304,7 @@ components:
       schema:
         type: string
   responses:
-    GET-Postings:
+    GET-Posts:
       description: Example response
       content:
         application/json:
