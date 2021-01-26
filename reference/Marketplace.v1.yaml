@@ -39,21 +39,11 @@ paths:
         description: Post the necessary fields for the API to create a new user.
       description: Creates a new user to the system.
     parameters: []
-  /posts:
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses:
-        '200':
-          description: OK
-      operationId: get-posts
-      parameters:
-        - $ref: '#/components/parameters/categories'
-      description: Returns postings' data
+  /api/users:
     parameters: []
     post:
       summary: ''
-      operationId: create-posting
+      operationId: register-user
       responses:
         '201':
           description: Created
@@ -63,7 +53,7 @@ paths:
                 $ref: '#/components/schemas/Posting'
         '400':
           description: 'Bad Request, missing information'
-      description: Creates and returns a new posting with the given parameters.
+      description: Registers new user into Marketplace.
   '/users/{userId}/posts/{postId}':
     parameters:
       - schema:
@@ -166,7 +156,7 @@ components:
     User:
       title: User
       type: object
-      description: 'User of the marketplace, in this case seller of the product'
+      description: 'User of the marketplace, in this case the seller (or buyer) of products posted.'
       x-examples:
         example-1:
           id: '321'
@@ -185,7 +175,7 @@ components:
           password: pa$$word
       properties:
         id:
-          description: Unique identifier for the given user.
+          description: Unique identifier of the user.
           type: string
         firstName:
           type: string
