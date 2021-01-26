@@ -49,6 +49,7 @@ paths:
       operationId: get-posts
       parameters:
         - $ref: '#/components/parameters/categories'
+      description: Returns postings' data
     parameters: []
     post:
       summary: ''
@@ -60,6 +61,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Posting'
+        '400':
+          description: 'Bad Request, missing information'
       description: Creates and returns a new posting with the given parameters.
   '/users/{userId}/posts/{postId}':
     parameters:
@@ -103,9 +106,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Posting'
+                $ref: '#/components/schemas/Post'
         '404':
           description: Not Found
+          headers: {}
+        '500':
+          description: Internal Server Error
       operationId: get-postings-postingId
       description: Fetches the posting with the given id.
     put:
@@ -113,13 +119,15 @@ paths:
       operationId: put-postings-postingId
       responses:
         '200':
-          description: OK
+          description: 'OK, Post updated.'
+      description: Updates the Posting data.
     delete:
       summary: ''
       operationId: delete-postings-postingId
       responses:
         '200':
-          description: OK
+          description: 'OK, Post deleted.'
+      description: Deletes the posting.
   '/users/{userId}':
     parameters:
       - schema:
@@ -131,14 +139,15 @@ paths:
       summary: Delete a specific user
       operationId: delete-users-userId
       responses:
-        '204':
-          description: No Content
+        '202':
+          description: Accepted
         '401':
           description: Unauthorized
         '404':
           description: User with id not found.
       security:
         - HTTPBasic: []
+      description: Deleting the specific user.
     get:
       summary: Get information on a specific user
       operationId: get-users-userId
@@ -148,54 +157,61 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties: {}
+                $ref: '#/components/schemas/User'
       security:
         - HTTPBasic: []
+      description: Get data of specific user.
 components:
   schemas:
     User:
       title: User
       type: object
-      description: ''
+      description: 'User of the marketplace, in this case seller of the product'
       x-examples:
         example-1:
-          id: ia2131-assd51132-213123as
-          firstName: Jaakko
-          lastName: Ikäheimo
-          email: jikaheimo@testi.com
-          birthDate: '1994-08-05'
-          creationDate: '2020-08-24'
-          username: JIkaheimo
+          id: '321'
+          firstName: Konsta
+          lastName: Holm
+          email: user@example.com
+          birthDate: '1999-03-19'
+          creationDate: '2019-08-24'
+          username: konstaholm
           address:
-            street: Meripuistokatu 27 as 14
+            street: Tietolinja 7
             country: Finland
-            city: Kemi
-            postalCode: 94100
+            city: Oulu
+            postalCode: 90570
+          phoneNumber: '0441234123'
+          password: pa$$word
       properties:
         id:
-          type: string
           description: Unique identifier for the given user.
+          type: string
         firstName:
           type: string
           description: First name of the user.
         lastName:
           type: string
+          description: Last name of the user.
         email:
           type: string
           format: email
+          description: Email of the user.
         birthDate:
           type: string
           format: date
           example: '1997-10-31'
+          description: Birthdate of the user.
         creationDate:
           type: string
           format: date
-          description: The date that the user was created.
+          description: The date user was created.
         username:
           type: string
+          description: Username of the user.
         address:
           type: object
+          description: Address of the user.
           properties:
             street:
               type: string
@@ -205,18 +221,30 @@ components:
               type: string
             postalCode:
               type: number
+          required:
+            - country
+        phoneNumber:
+          type: string
+          description: Phone number of the user.
+        password:
+          type: string
+          description: Password of the user.
+          format: password
       required:
-        - id
         - firstName
         - lastName
         - email
+        - birthDate
+        - username
+        - phoneNumber
+        - password
     Post:
       title: Posting
       type: object
       description: Posting describes an item to be sold in the marketplace
       properties:
         id:
-          type: number
+          type: string
           description: Identification number of the posting
         description:
           type: string
@@ -225,44 +253,68 @@ components:
           type: string
           description: Title of the posting
         category:
-          $ref: '#/components/schemas/Category'
+          type: string
+          enum:
+            - Computers
+            - Vehicles
+            - Clothes
+            - Jobs
+          description: Category of the item being sold
         askingPrice:
           type: number
+          description: Price of the product
         createdAt:
           type: string
           format: date-time
+          description: Date of the ad created
         deliveryType:
           type: string
           enum:
             - Shipping
             - Pickup
+          description: Delivery type of sold product
         seller:
           $ref: '#/components/schemas/User'
         location:
-          type: string
+          $ref: '#/components/schemas/Location'
         images:
           type: string
+          description: Images of the product being sold.
       required:
-        - id
-        - description
         - title
         - category
         - askingPrice
         - seller
         - location
-    Category:
-      title: Category
-      type: object
-      properties:
-        id:
-          description: Identification number of the category
-          type: number
-        name:
-          type: string
-          description: Name of the category
-        description:
-          type: string
-          description: Description of the category
+      x-examples:
+        example-1:
+          id: string
+          description: string
+          title: string
+          category: Computers
+          askingPrice: 0
+          createdAt: '2019-08-24T14:15:22Z'
+          deliveryType: Shipping
+          seller:
+            id: string
+            firstName: string
+            lastName: string
+            email: user@example.com
+            birthDate: '1997-10-31'
+            creationDate: '2019-08-24'
+            username: string
+            address:
+              street: string
+              country: string
+              city: string
+              postalCode: 0
+            phoneNumber: string
+            password: pa$$word
+          location:
+            city: string
+            country: string
+            id: string
+          images: string
     Location:
       title: Location
       type: object
@@ -272,16 +324,23 @@ components:
         country:
           type: string
         id:
-          type: number
+          type: string
       required:
         - city
         - country
+      x-examples:
+        example-1:
+          city: Oulu
+          country: Finland
+          id: string
     CreatedUser:
       title: CreatedUser
       type: object
       properties:
         id:
           type: string
+      required:
+        - id
   parameters:
     categories:
       name: categories
@@ -311,29 +370,36 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/Posting'
+              $ref: '#/components/schemas/Post'
           examples:
             example-1:
               value:
-                - id: 0
+                - id: string
                   description: string
                   title: string
-                  category:
-                    id: 0
-                    name: string
-                    description: string
+                  category: Computers
                   askingPrice: 0
                   createdAt: '2019-08-24T14:15:22Z'
                   deliveryType: Shipping
                   seller:
-                    id: 0
+                    id: string
                     firstName: string
                     lastName: string
                     email: user@example.com
-                    dateOfBirth: '1997-10-31'
-                    emailVerified: true
-                    createdAt: '2019-08-24'
-                  location: string
+                    birthDate: '1997-10-31'
+                    creationDate: '2019-08-24'
+                    username: string
+                    address:
+                      street: string
+                      country: string
+                      city: string
+                      postalCode: 0
+                    phoneNumber: string
+                    password: pa$$word
+                  location:
+                    city: string
+                    country: string
+                    id: string
                   images: string
         application/xml:
           schema:
