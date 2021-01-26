@@ -5,152 +5,191 @@ info:
 servers:
   - url: 'http://localhost:3000'
 paths:
-  /users:
-    post:
-      summary: Create New User
-      operationId: post-users
-      responses:
-        '201':
-          description: User Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                New User Bob Fellow:
-                  value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: '1996-08-24'
-                    emailVerified: false
-                    createDate: '2020-11-18'
-        '400':
-          description: Missing Required Information
-        '409':
-          description: Email Already Taken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-            examples: {}
-        description: Post the necessary fields for the API to create a new user.
-      description: Creates a new user to the system.
-    parameters: []
   /api/users:
     parameters: []
     post:
       summary: ''
       operationId: register-user
       responses:
-        '201':
-          description: Created
+        '200':
+          description: User was successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+        '409':
+          description: Username is already in use.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      description: Registers a new user.
+  '/api/posts/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: The id of the displayed post.
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: Post was found and fetched.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Posting'
         '400':
-          description: 'Bad Request, missing information'
-      description: Registers new user into Marketplace.
-  '/users/{userId}/posts/{postId}':
-    parameters:
-      - schema:
-          type: string
-        name: userId
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: postId
-        in: path
-        required: true
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Posting'
+          description: The given post id was in invalid format.
         '404':
-          description: Not Found
-      operationId: get-users-userId-postings-postingId
-      description: ''
-  '/posts/{postId}':
-    parameters:
-      - schema:
-          type: string
-        name: postId
-        in: path
-        required: true
-    get:
-      summary: Your GET endpoint
-      tags: []
+          description: Post was not found.
+      operationId: display-post
+      description: Displays a post with the given id.
+    put:
+      summary: ''
+      operationId: modify-post
       responses:
-        '200':
-          description: OK
+        '204':
+          description: Post was found and modified.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Post'
+              examples: {}
+        '400':
+          description: The given post id was in invalid format or some data was missing.
         '404':
-          description: Not Found
-          headers: {}
+          description: Post was not found.
         '500':
-          description: Internal Server Error
-      operationId: get-postings-postingId
-      description: Fetches the posting with the given id.
-    put:
-      summary: ''
-      operationId: put-postings-postingId
-      responses:
-        '200':
-          description: 'OK, Post updated.'
-      description: Updates the Posting data.
-    delete:
-      summary: ''
-      operationId: delete-postings-postingId
-      responses:
-        '200':
-          description: 'OK, Post deleted.'
-      description: Deletes the posting.
-  '/users/{userId}':
-    parameters:
-      - schema:
-          type: string
-        name: userId
-        in: path
-        required: true
-    delete:
-      summary: Delete a specific user
-      operationId: delete-users-userId
-      responses:
-        '202':
-          description: Accepted
-        '401':
-          description: Unauthorized
-        '404':
-          description: User with id not found.
+          description: Something bad happened.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message describing the issue.
+      description: Modifies a post with the given id.
       security:
-        - HTTPBasic: []
-      description: Deleting the specific user.
+        - JSONWebToken: []
+    delete:
+      summary: ''
+      operationId: delete-post
+      responses:
+        '204':
+          description: Post was found and deleted.
+        '400':
+          description: The given post id was in invalid format.
+        '404':
+          description: Post was not found.
+      security:
+        - JSONWebToken: []
+      description: Deletes a post with the given id.
+  /api/login:
+    post:
+      summary: ''
+      operationId: login-user
+      responses:
+        '200':
+          description: User was successfully logged in.
+      description: Authenticates the user to use some Marketplace functionalities.
+  /api/posts:
     get:
-      summary: Get information on a specific user
-      operationId: get-users-userId
+      summary: Your GET endpoint
+      tags: []
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: array
+                description: Array of fetched and paged posts.
+                items:
+                  $ref: '#/components/schemas/Post'
+      operationId: get-posts
+      description: Displays paged posts.
+      parameters:
+        - schema:
+            type: number
+            example: 5
+            minimum: 1
+            default: 1
+          in: query
+          name: index
+          description: The start index of posts returned.
+        - schema:
+            type: number
+            minimum: 1
+            maximum: 100
+            example: 50
+            default: 100
+          in: query
+          name: count
+          description: The number of posts returned.
+    parameters: []
+    post:
+      summary: ''
+      operationId: create-post
+      responses:
+        '201':
+          description: New post was created.
+        '400':
+          description: Invalid data.
+      description: Creates a new post.
       security:
-        - HTTPBasic: []
-      description: Get data of specific user.
+        - JSONWebToken: []
+  /api/posts/search:
+    post:
+      summary: ''
+      operationId: search-posts
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
+        '':
+          description: ''
+      description: Performs a search query for posts based on given parameters.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: country
+          description: The country of searched posts.
+        - schema:
+            type: string
+          in: query
+          name: city
+          description: The city of searched posts.
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: posted
+          description: The date of searched posts.
+        - schema:
+            type: string
+          in: query
+          name: category
+          description: The category of searched posts.
+    parameters: []
 components:
   schemas:
     User:
@@ -331,27 +370,7 @@ components:
           type: string
       required:
         - id
-  parameters:
-    categories:
-      name: categories
-      in: query
-      required: false
-      schema:
-        type: string
-        format: uuid
-      description: Returns postings based on the given category filter.
-    posted:
-      name: posted
-      in: query
-      required: false
-      schema:
-        type: string
-    location:
-      name: locaion
-      in: query
-      required: false
-      schema:
-        type: string
+  parameters: {}
   responses:
     GET-Posts:
       description: Example response
@@ -399,8 +418,14 @@ components:
           schema:
             type: object
             properties: {}
+    Bad-Request:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: object
   securitySchemes:
-    HTTPBasic:
+    JSONWebToken:
       type: http
-      scheme: basic
+      scheme: bearer
       description: ''
