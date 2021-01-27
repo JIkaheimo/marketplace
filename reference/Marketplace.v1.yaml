@@ -508,7 +508,7 @@ components:
             basic:
               value:
                 message: 'Something went wrong :('
-    GET-Posts:
+    Posts:
       description: Example response
       content:
         application/json:
