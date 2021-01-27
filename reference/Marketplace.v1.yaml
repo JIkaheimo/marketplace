@@ -29,6 +29,8 @@ paths:
                       country: Finland
                       postalCode: 90550
                       street: Testaajantie 123
+                    password: testaaja123
+                    birthDate: '1994-08-05'
                     phoneNumber: '+358401231231'
         '400':
           $ref: '#/components/responses/400'
