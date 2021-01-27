@@ -5,7 +5,7 @@ info:
 servers:
   - url: 'http://localhost:3000'
     description: Dev
-  - url: 'https://jikaheimo.software/marketplace/'
+  - url: 'https://jikaheimo.software/marketplace'
     description: Release
 paths:
   /api/users:
@@ -32,7 +32,6 @@ paths:
                       country: Finland
                       postalCode: 90550
                       street: Testaajantie 123
-                    password: testaaja123
                     birthDate: '1994-08-05'
                     phoneNumber: '+358401231231'
         '400':
@@ -493,7 +492,6 @@ components:
         - username
         - address
         - phoneNumber
-        - password
     PostProperties:
       title: Post
       type: object
@@ -740,9 +738,9 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            login:
+            basic:
               value:
-                message: User with that username already exists
+                message: Conflict
     '500':
       description: Typical response for response code 500 (Internal server error).
       content:
