@@ -18,23 +18,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
-          description: Bad Request
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
         '409':
-          description: Username is already in use.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
+          $ref: '#/components/responses/409'
         '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+          $ref: '#/components/responses/500'
       description: Registers a new user.
   '/api/posts/{id}':
     parameters:
@@ -55,9 +45,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Posting'
         '400':
-          description: The given post id was in invalid format.
+          $ref: '#/components/responses/400'
         '404':
-          description: Post was not found.
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
       operationId: display-post
       description: Displays a post with the given id.
     put:
@@ -72,19 +64,15 @@ paths:
                 $ref: '#/components/schemas/Post'
               examples: {}
         '400':
-          description: The given post id was in invalid format or some data was missing.
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
         '404':
-          description: Post was not found.
+          $ref: '#/components/responses/404'
         '500':
-          description: Something bad happened.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: Error message describing the issue.
+          $ref: '#/components/responses/500'
       description: Modifies a post with the given id.
       security:
         - JSONWebToken: []
@@ -95,12 +83,24 @@ paths:
         '204':
           description: Post was found and deleted.
         '400':
-          description: The given post id was in invalid format.
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
         '404':
-          description: Post was not found.
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
       security:
         - JSONWebToken: []
       description: Deletes a post with the given id.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        description: ''
   /api/login:
     post:
       summary: ''
@@ -108,7 +108,47 @@ paths:
       responses:
         '200':
           description: User was successfully logged in.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Properties for successful login.
+                properties:
+                  token:
+                    type: string
+                    description: Generated JSON token.
+                  username:
+                    type: string
+                    description: Username of the logged in user.
+        '401':
+          description: Invalid username or password.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Response for inv
+                properties:
+                  message:
+                    type: string
+                    description: Message describing what happened.
+              examples:
+                example-1:
+                  value:
+                    message: Invalid username or password.
+        '500':
+          description: Internal Server Error
       description: Authenticates the user to use some Marketplace functionalities.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginProperties'
+            examples:
+              example-1:
+                value:
+                  username: Testaaja
+                  password: testaaja123
+        description: ''
   /api/posts:
     get:
       summary: Your GET endpoint
@@ -164,36 +204,38 @@ paths:
           description: OK
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: ''
         '':
           description: ''
       description: Performs a search query for posts based on given parameters.
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: country
-          description: The country of searched posts.
-        - schema:
-            type: string
-          in: query
-          name: city
-          description: The city of searched posts.
-        - schema:
-            type: string
-            format: date
-          in: query
-          name: posted
-          description: The date of searched posts.
-        - schema:
-            type: string
-          in: query
-          name: category
-          description: The category of searched posts.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  type: string
+                  description: The country of searched posts.
+                city:
+                  type: string
+                  description: The city of searched posts.
+                posted:
+                  type: string
+                  description: The date of searched posts.
+                category:
+                  type: string
+                  description: The category of searched posts.
+        description: ''
     parameters: []
 components:
   schemas:
-    User:
-      title: User
+    UserProperties:
+      title: UserProperties
       type: object
       description: 'User of the marketplace, in this case the seller (or buyer) of products posted.'
       x-examples:
@@ -216,12 +258,6 @@ components:
         id:
           description: Unique identifier of the user.
           type: string
-        firstName:
-          type: string
-          description: First name of the user.
-        lastName:
-          type: string
-          description: Last name of the user.
         email:
           type: string
           format: email
@@ -230,7 +266,7 @@ components:
           type: string
           format: date
           example: '1997-10-31'
-          description: Birthdate of the user.
+          description: Date of birth of the user.
         creationDate:
           type: string
           format: date
@@ -242,7 +278,7 @@ components:
           type: object
           description: Address of the user.
           properties:
-            street:
+            streetAddress:
               type: string
             country:
               type: string
@@ -260,8 +296,6 @@ components:
           description: Password of the user.
           format: password
       required:
-        - firstName
-        - lastName
         - email
         - birthDate
         - username
@@ -271,10 +305,40 @@ components:
       title: Posting
       type: object
       description: Posting describes an item to be sold in the marketplace
+      x-examples:
+        example-1:
+          id: string
+          description: string
+          title: string
+          category: Computers
+          askingPrice: 0
+          createdAt: '2019-08-24T14:15:22Z'
+          deliveryType: Shipping
+          seller:
+            id: string
+            firstName: string
+            lastName: string
+            email: user@example.com
+            birthDate: '1997-10-31'
+            creationDate: '2019-08-24'
+            username: string
+            address:
+              street: string
+              country: string
+              city: string
+              postalCode: 0
+            phoneNumber: string
+            password: pa$$word
+          location:
+            city: string
+            country: string
+            id: string
+          images: string
       properties:
         id:
           type: string
           description: Identification number of the posting
+          readOnly: true
         description:
           type: string
           description: Description of the posting
@@ -315,35 +379,6 @@ components:
         - askingPrice
         - seller
         - location
-      x-examples:
-        example-1:
-          id: string
-          description: string
-          title: string
-          category: Computers
-          askingPrice: 0
-          createdAt: '2019-08-24T14:15:22Z'
-          deliveryType: Shipping
-          seller:
-            id: string
-            firstName: string
-            lastName: string
-            email: user@example.com
-            birthDate: '1997-10-31'
-            creationDate: '2019-08-24'
-            username: string
-            address:
-              street: string
-              country: string
-              city: string
-              postalCode: 0
-            phoneNumber: string
-            password: pa$$word
-          location:
-            city: string
-            country: string
-            id: string
-          images: string
     Location:
       title: Location
       type: object
@@ -370,8 +405,111 @@ components:
           type: string
       required:
         - id
+    LoginProperties:
+      title: LoginProperties
+      type: object
+      description: Properties needed to login an user.
+      properties:
+        username:
+          type: string
+          description: Username used to login.
+          example: Testaaja
+        password:
+          type: string
+          description: Password used to login
+          format: password
+          example: testaaja123
+      required:
+        - username
+        - password
+      x-examples:
+        example-1:
+          username: Testaaja
+          password: testaaja123
+    ErrorMessage:
+      type: object
+      title: ErrorMessage
+      description: Typical message returned when either 4xx or 5xx error occurs.
+      additionalProperties: false
+      x-examples:
+        '401':
+          message: Unauthorized
+        '404':
+          message: Post was not found
+        5xx:
+          message: Something went wrong
+      properties:
+        message:
+          type: string
+          description: Message describing the cause of error.
+          example: Something went wrong
+          readOnly: true
+      required:
+        - message
+      readOnly: true
   parameters: {}
   responses:
+    '400':
+      description: Typical response for response code 400 (Bad Request).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            basic:
+              value:
+                message: Invalid data
+    '401':
+      description: Typical response for response code 401 (Unauthorized). User has not been authenticated yet.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            basic:
+              value:
+                message: Unauthorized
+    '403':
+      description: Typical response for response code 403 (Forbidden). Usually occurs when requesting a resource owned/managed by other user.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            basic:
+              value:
+                message: Access not allowed
+    '404':
+      description: Typical response for response code 404 (Not Found). Typically occurs when requesting a resource with an id that does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            basic:
+              value:
+                message: Requested resource not found
+    '409':
+      description: Typical response for response code 409 (Conflict).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            login:
+              value:
+                message: User with that username already exists
+    '500':
+      description: Typical response for response code 500 (Internal server error).
+      content:
+        application/json:
+          schema:
+            description: Properties describing what went wrong.
+            $ref: ''
+          examples:
+            basic:
+              value:
+                message: 'Something went wrong :('
     GET-Posts:
       description: Example response
       content:
@@ -418,12 +556,6 @@ components:
           schema:
             type: object
             properties: {}
-    Bad-Request:
-      description: Example response
-      content:
-        application/json:
-          schema:
-            type: object
   securitySchemes:
     JSONWebToken:
       type: http
