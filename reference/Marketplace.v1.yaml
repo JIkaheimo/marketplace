@@ -120,6 +120,10 @@ paths:
                   username:
                     type: string
                     description: Username of the logged in user.
+            application/xml:
+              schema:
+                type: object
+                properties: {}
         '401':
           description: Invalid username or password.
           content:
@@ -137,25 +141,25 @@ paths:
                     message: Invalid username or password.
         '500':
           description: Internal Server Error
-      description: Authenticates the user to use some Marketplace functionalities.
+      description: Authenticates the user to use some Marketplace functionalities. Returns user token and username.
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginProperties'
             examples:
-              example-1:
+              basic:
                 value:
                   username: Testaaja
                   password: testaaja123
-        description: ''
+        description: Username and password for authentication.
   /api/posts:
     get:
       summary: Your GET endpoint
       tags: []
       responses:
         '200':
-          description: OK
+          description: Successfully returned a list of posts.
           content:
             application/json:
               schema:
@@ -163,6 +167,8 @@ paths:
                 description: Array of fetched and paged posts.
                 items:
                   $ref: '#/components/schemas/Post'
+        '500':
+          $ref: '#/components/responses/500'
       operationId: get-posts
       description: Displays paged posts.
       parameters:
@@ -256,8 +262,9 @@ components:
           password: pa$$word
       properties:
         id:
-          description: Unique identifier of the user.
           type: string
+          description: Unique identifier of the user.
+          readOnly: true
         email:
           type: string
           format: email
@@ -301,7 +308,7 @@ components:
         - username
         - phoneNumber
         - password
-    Post:
+    PostProperties:
       title: Posting
       type: object
       description: Posting describes an item to be sold in the marketplace
@@ -379,32 +386,23 @@ components:
         - askingPrice
         - seller
         - location
-    Location:
+    LocationProperties:
       title: Location
       type: object
-      properties:
-        city:
-          type: string
-        country:
-          type: string
-        id:
-          type: string
-      required:
-        - city
-        - country
       x-examples:
         example-1:
           city: Oulu
           country: Finland
           id: string
-    CreatedUser:
-      title: CreatedUser
-      type: object
       properties:
-        id:
+        city:
+          type: string
+        country:
           type: string
       required:
-        - id
+        - city
+        - country
+      description: ''
     LoginProperties:
       title: LoginProperties
       type: object
