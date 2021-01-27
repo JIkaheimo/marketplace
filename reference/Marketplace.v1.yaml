@@ -235,22 +235,9 @@ paths:
                 type: object
                 properties: {}
         '401':
-          description: Invalid username or password.
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Response for inv
-                properties:
-                  message:
-                    type: string
-                    description: Message describing what happened.
-              examples:
-                example-1:
-                  value:
-                    message: Invalid username or password.
+          $ref: '#/components/responses/401'
         '500':
-          description: Internal Server Error
+          $ref: '#/components/responses/500'
       description: Authenticates the user to use some Marketplace functionalities. Returns user token and username.
       requestBody:
         content:
