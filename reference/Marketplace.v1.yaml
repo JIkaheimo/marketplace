@@ -20,7 +20,6 @@ paths:
               examples:
                 basic:
                   value:
-                    birthDate: '1994-08-05'
                     id: 5099803df3f4948bd2f98391
                     email: testaaja123@test.com
                     creationDate: '2020-01-01'
@@ -31,7 +30,6 @@ paths:
                       postalCode: 90550
                       street: Testaajantie 123
                     phoneNumber: '+358401231231'
-                    password: testaaja123
         '400':
           $ref: '#/components/responses/400'
         '409':
