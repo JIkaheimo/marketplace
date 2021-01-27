@@ -20,6 +20,7 @@ paths:
               examples:
                 basic:
                   value:
+                    birthDate: '1994-08-05'
                     id: 5099803df3f4948bd2f98391
                     email: testaaja123@test.com
                     creationDate: '2020-01-01'
@@ -30,6 +31,7 @@ paths:
                       postalCode: 90550
                       street: Testaajantie 123
                     phoneNumber: '+358401231231'
+                    password: testaaja123
         '400':
           $ref: '#/components/responses/400'
         '409':
@@ -69,13 +71,13 @@ paths:
       tags: []
       responses:
         '200':
-          description: Post was found and fetched.
+          description: Post with the given id.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostProperties'
               examples:
-                example-1:
+                basic:
                   value:
                     id: 5099803df3f4948bd2f98391
                     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed vestibulum justo. Pellentesque orci eros, convallis fringilla velit at, consequat volutpat urna. Mauris nec dui sapien. Praesent at mattis urna. Aenean pellentesque placerat vulputate. Aliquam vel orci aliquam magna pretium viverra ullamcorper bibendum metus. Maecenas eu nisl interdum, lacinia ipsum vel, tempus velit. Etiam efficitur aliquet justo. Morbi rutrum malesuada dui nec vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed porttitor molestie augue placerat rhoncus. Morbi eu nisl id urna aliquet vestibulum sed semper metus. Suspendisse tempus lorem lacus, non fringilla est sodales at. Maecenas congue facilisis erat, vel vestibulum justo scelerisque sed. Donec vel aliquet ante, a varius purus. Nam tempor pellentesque lorem, eu convallis magna fringilla sit amet.'
@@ -110,14 +112,15 @@ paths:
       operationId: modify-post
       responses:
         '204':
-          description: Post was found and modified.
+          description: Modified post.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostProperties'
               examples:
-                example-1:
+                basic:
                   value:
+                    id: 5099803df3f4948bd2f98391
                     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed vestibulum justo. Pellentesque orci eros, convallis fringilla velit at, consequat volutpat urna. Mauris nec dui sapien. Praesent at mattis urna. Aenean pellentesque placerat vulputate. Aliquam vel orci aliquam magna pretium viverra ullamcorper bibendum metus. Maecenas eu nisl interdum, lacinia ipsum vel, tempus velit. Etiam efficitur aliquet justo. Morbi rutrum malesuada dui nec vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed porttitor molestie augue placerat rhoncus. Morbi eu nisl id urna aliquet vestibulum sed semper metus. Suspendisse tempus lorem lacus, non fringilla est sodales at. Maecenas congue facilisis erat, vel vestibulum justo scelerisque sed. Donec vel aliquet ante, a varius purus. Nam tempor pellentesque lorem, eu convallis magna fringilla sit amet.'
                     title: Factory New Audi A4
                     category: cars
@@ -135,6 +138,8 @@ paths:
                       country: Finland
                       postalCode: 90550
                       street: Testaajantie 123
+                    imageUrls:
+                      - www.jikaheimo.software/api/products/1/images/1.png
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -154,7 +159,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PostProperties'
             examples:
-              example-1:
+              basic:
                 value:
                   id: 5099803df3f4948bd2f98391
                   description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed vestibulum justo. Pellentesque orci eros, convallis fringilla velit at, consequat volutpat urna. Mauris nec dui sapien. Praesent at mattis urna. Aenean pellentesque placerat vulputate. Aliquam vel orci aliquam magna pretium viverra ullamcorper bibendum metus. Maecenas eu nisl interdum, lacinia ipsum vel, tempus velit. Etiam efficitur aliquet justo. Morbi rutrum malesuada dui nec vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed porttitor molestie augue placerat rhoncus. Morbi eu nisl id urna aliquet vestibulum sed semper metus. Suspendisse tempus lorem lacus, non fringilla est sodales at. Maecenas congue facilisis erat, vel vestibulum justo scelerisque sed. Donec vel aliquet ante, a varius purus. Nam tempor pellentesque lorem, eu convallis magna fringilla sit amet.'
@@ -324,6 +329,33 @@ paths:
       responses:
         '201':
           description: Newly created post.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostProperties'
+              examples:
+                basic:
+                  value:
+                    id: 5099803df3f4948bd2f98391
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed vestibulum justo. Pellentesque orci eros, convallis fringilla velit at, consequat volutpat urna. Mauris nec dui sapien. Praesent at mattis urna. Aenean pellentesque placerat vulputate. Aliquam vel orci aliquam magna pretium viverra ullamcorper bibendum metus. Maecenas eu nisl interdum, lacinia ipsum vel, tempus velit. Etiam efficitur aliquet justo. Morbi rutrum malesuada dui nec vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed porttitor molestie augue placerat rhoncus. Morbi eu nisl id urna aliquet vestibulum sed semper metus. Suspendisse tempus lorem lacus, non fringilla est sodales at. Maecenas congue facilisis erat, vel vestibulum justo scelerisque sed. Donec vel aliquet ante, a varius purus. Nam tempor pellentesque lorem, eu convallis magna fringilla sit amet.'
+                    title: Factory New Audi A4
+                    category: cars
+                    askingPrice: 20000
+                    posted: '2019-08-24T14:15:22Z'
+                    deliveryType:
+                      shipping: true
+                      pickup: true
+                    seller:
+                      email: testaaja123@test.com
+                      phoneNumber: '+358401231231'
+                      username: Testaaja123
+                    location:
+                      city: Oulu
+                      country: Finland
+                      postalCode: 90550
+                      street: Testaajantie 123
+                    imageUrls:
+                      - www.jikaheimo.software/api/products/1/images/1.png
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -397,8 +429,8 @@ paths:
 components:
   schemas:
     UserProperties:
-      title: User
       type: object
+      title: User
       description: 'User of the marketplace, in this case the seller (or buyer) of products posted.'
       x-examples:
         basic:
@@ -526,7 +558,6 @@ components:
         deliveryType:
           type: object
           description: Delivery type of sold product
-          additionalProperties: false
           required:
             - shipping
             - pickup
@@ -557,7 +588,6 @@ components:
         - category
         - askingPrice
         - deliveryType
-        - seller
     LocationProperties:
       title: Location
       type: object
@@ -615,7 +645,6 @@ components:
       type: object
       title: ErrorMessage
       description: Typical message returned when either 4xx or 5xx error occurs.
-      additionalProperties: false
       x-examples:
         '401':
           message: Unauthorized
