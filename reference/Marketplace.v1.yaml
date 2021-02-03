@@ -429,6 +429,20 @@ paths:
                   category: cars
         description: ''
     parameters: []
+  '/api/posts/{id}/upload':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: upload-post-images
+      responses:
+        '200':
+          description: OK
+      description: Uploads post specific images.
 components:
   schemas:
     UserProperties:
@@ -738,9 +752,12 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            basic:
+            email:
               value:
-                message: Conflict
+                message: email already in use
+            username:
+              value:
+                message: username already in use
     '500':
       description: Typical response for response code 500 (Internal server error).
       content:
