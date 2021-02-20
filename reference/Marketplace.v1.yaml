@@ -208,6 +208,8 @@ paths:
           $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
       security:
@@ -480,7 +482,26 @@ paths:
           $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
-      description: Replaces and updates post specific images with the provided ones.
+      description: 'Replaces and updates post specific images with the provided ones. The user must be authenticated and authorized to updload images. '
+      security:
+        - JSONWebToken: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  maxItems: 3
+                  minItems: 0
+                  description: The image files to upload.
+                  items:
+                    type: string
+                    format: binary
+                  writeOnly: true
+            examples: {}
+        description: The image files to upload with the image.
   /api/images:
     get:
       summary: Your GET endpoint
@@ -522,10 +543,13 @@ paths:
               schema:
                 type: string
                 format: binary
+              examples:
+                default:
+                  value: string
         '404':
           $ref: '#/components/responses/404'
       operationId: display-image
-      description: Returns an image with the specified name.
+      description: Returns an image with the specified name/path.
 components:
   schemas:
     UserProperties:
