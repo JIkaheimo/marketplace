@@ -261,7 +261,7 @@ paths:
           $ref: '#/components/responses/401'
         '500':
           $ref: '#/components/responses/500'
-      description: Authenticates the user to use some Marketplace functionalities. Returns user token and username.
+      description: Authenticates the user to use some Marketplace functionalities. Returns the user related information and bearer token on successful request.
       requestBody:
         content:
           application/json:
@@ -429,7 +429,14 @@ paths:
                         - www.jikaheimo.software/api/images/1.png
         '500':
           $ref: '#/components/responses/500'
-      description: Performs a search query for posts based on given parameters.
+      description: |-
+        Performs a search query for posts based on given parameters.
+
+        Available query parameters:
+        * country filters posts by country.
+        * city filters posts by city.
+        * posted filters posts by date posted.
+        * category filters posts by category.
       parameters: []
       requestBody:
         content:
@@ -615,7 +622,7 @@ components:
     PostProperties:
       type: object
       title: Post
-      description: Posting describes an item to be sold in the marketplace
+      description: Post describes an item to be listed/sold in the marketplace
       x-examples:
         basic:
           id: 5099803df3f4948bd2f98391
@@ -642,12 +649,12 @@ components:
       properties:
         id:
           type: string
-          description: Identification number of the posting
+          description: Unique identifier of the post.
           example: 5099803df3f4948bd2f98391
           readOnly: true
         description:
           type: string
-          description: Description of the posting
+          description: Description of the post.
           example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed vestibulum justo. Pellentesque orci eros, convallis fringilla velit at, consequat volutpat urna. Mauris nec dui sapien. Praesent at mattis urna. Aenean pellentesque placerat vulputate. Aliquam vel orci aliquam magna pretium viverra ullamcorper bibendum metus. Maecenas eu nisl interdum, lacinia ipsum vel, tempus velit. Etiam efficitur aliquet justo. Morbi rutrum malesuada dui nec vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed porttitor molestie augue placerat rhoncus. Morbi eu nisl id urna aliquet vestibulum sed semper metus. Suspendisse tempus lorem lacus, non fringilla est sodales at. Maecenas congue facilisis erat, vel vestibulum justo scelerisque sed. Donec vel aliquet ante, a varius purus. Nam tempor pellentesque lorem, eu convallis magna fringilla sit amet.'
         title:
           type: string
