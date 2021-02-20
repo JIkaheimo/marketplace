@@ -1,7 +1,23 @@
 openapi: 3.0.0
 info:
-  title: marketplace
+  title: marketplace-API
   version: '1.0'
+  description: |-
+    Simple API developed to serve as a platform for selling and buying used items. As an example of this in Finland would be tori.fi or globally ebay.com
+
+    Related Course
+    Building Cloud Integration, spring 2021
+
+    Design and Development
+    - Jaakko Ikäheimo
+    - Konsta Holm
+
+    This API implements the following functional requirements:
+    - User registration and login. 
+    - Post creation for authenticated users.
+    - Post modification for authenticated users.
+    - Post deletion for authenticated users.
+    - Post browsing for all the users.
 servers:
   - url: 'http://localhost:3000'
     description: Dev
@@ -19,35 +35,46 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProperties'
+                type: object
+                description: Newly created user and user's bearer token.
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserProperties'
+                  token:
+                    $ref: '#/components/schemas/BearerToken'
+                required:
+                  - user
+                  - token
               examples:
-                basic:
+                example-1:
                   value:
-                    id: 5099803df3f4948bd2f98391
-                    email: testaaja123@test.com
-                    creationDate: '2020-01-01'
-                    username: Testaaja123
-                    address:
-                      city: Oulu
-                      country: Finland
-                      postalCode: 90550
-                      street: Testaajantie 123
-                    birthDate: '1994-08-05'
-                    phoneNumber: '+358401231231'
+                    user:
+                      id: 5099803df3f4948bd2f98391
+                      email: testaaja123@test.com
+                      birthDate: '1997-10-31'
+                      creationDate: '2020-01-01'
+                      username: Testaaja123
+                      address:
+                        city: Oulu
+                        country: Finland
+                        postalCode: 90550
+                        street: Testaajantie 123
+                      phoneNumber: '+358401231231'
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RhYWphMzQ1IiwiaWQiOiI2MDMwMTUzYjI0MjIyNjM1NjhlZWJlZjYiLCJpYXQiOjE2MTM3NjM5MTR9.Z1vBx763s23IxDPP7DpRo1KyYkZndOzLcqazDWqdymE
         '400':
           $ref: '#/components/responses/400'
         '409':
           $ref: '#/components/responses/409'
         '500':
           $ref: '#/components/responses/500'
-      description: Registers a new user.
+      description: 'Registers a new user. Registering for the API authenticates the user to create, update and delete posts.'
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/UserProperties'
             examples:
-              basic:
+              default:
                 value:
                   email: testaaja123@test.com
                   username: Testaaja123
@@ -62,12 +89,7 @@ paths:
         description: Valid request body for registration.
   '/api/posts/{id}':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: The id of the displayed post.
+      - $ref: '#/components/parameters/Id'
     get:
       summary: Display post
       tags: []
@@ -171,6 +193,8 @@ paths:
                     shipping: true
                     pickup: true
         description: Required data in correct format to modify a post.
+      parameters:
+        - $ref: '#/components/parameters/Bearer'
     delete:
       summary: Delete a post
       operationId: delete-post
@@ -188,14 +212,16 @@ paths:
           $ref: '#/components/responses/500'
       security:
         - JSONWebToken: []
-      description: Deletes a post with the given id.
+      description: Deletes a post with the given id. To delete a post the user has to be authenticated and authorized.
+      parameters:
+        - $ref: '#/components/parameters/Bearer'
   /api/login:
     post:
       summary: Login user
       operationId: login-user
       responses:
         '200':
-          description: Token and username of authenticated user.
+          description: Token and the user information of the authenticated user.
           content:
             application/json:
               schema:
@@ -203,20 +229,28 @@ paths:
                 description: Properties for successful login.
                 properties:
                   token:
-                    type: string
-                    description: Generated JSON token.
-                    example: asdia1231i2j1rl2jr199jpjjjjkjkasrlajsr1r12r12r
-                    readOnly: true
-                  username:
-                    type: string
-                    description: Username of the logged in user.
-                    example: Testaaja123
-                    readOnly: true
+                    $ref: '#/components/schemas/BearerToken'
+                  user:
+                    $ref: '#/components/schemas/UserProperties'
+                required:
+                  - token
+                  - user
               examples:
-                basic:
+                default:
                   value:
-                    token: asdia1231i2j1rl2jr199jpjjjjkjkasrlajsr1r12r12r
-                    username: Testaaja123
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RhYWphMzQ1IiwiaWQiOiI2MDMwMTUzYjI0MjIyNjM1NjhlZWJlZjYiLCJpYXQiOjE2MTM3NjM5MTR9.Z1vBx763s23IxDPP7DpRo1KyYkZndOzLcqazDWqdymE
+                    user:
+                      id: 5099803df3f4948bd2f98391
+                      email: testaaja123@test.com
+                      birthDate: '1997-10-31'
+                      creationDate: '2020-01-01'
+                      username: Testaaja123
+                      address:
+                        city: Oulu
+                        country: Finland
+                        postalCode: 90550
+                        street: Testaajantie 123
+                      phoneNumber: '+358401231231'
             application/xml:
               schema:
                 type: object
@@ -390,7 +424,7 @@ paths:
                         postalCode: 90550
                         street: Testaajantie 123
                       imageUrls:
-                        - www.jikaheimo.software/api/products/1/images/1.png
+                        - www.jikaheimo.software/api/images/1.png
         '500':
           $ref: '#/components/responses/500'
       description: Performs a search query for posts based on given parameters.
@@ -431,18 +465,67 @@ paths:
     parameters: []
   '/api/posts/{id}/upload':
     parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
+      - $ref: '#/components/parameters/Id'
     post:
       summary: ''
       operationId: upload-post-images
       responses:
         '200':
           description: OK
-      description: Uploads post specific images.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+      description: Replaces and updates post specific images with the provided ones.
+  /api/images:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: A list of product image urls in the server.
+                items:
+                  type: string
+              examples:
+                example-1:
+                  value:
+                    - string
+        '500':
+          $ref: '#/components/responses/500'
+      operationId: display-images
+      description: Returns path of all the images.
+  '/api/images/{name}':
+    parameters:
+      - schema:
+          type: string
+        name: name
+        in: path
+        required: true
+        description: Name or path of the image.
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/404'
+      operationId: display-image
+      description: Returns an image with the specified name.
 components:
   schemas:
     UserProperties:
@@ -477,7 +560,6 @@ components:
           format: date
           example: '1997-10-31'
           description: Date of birth of the user. Used for age validation.
-          writeOnly: true
         creationDate:
           type: string
           format: date
@@ -506,9 +588,10 @@ components:
         - username
         - address
         - phoneNumber
+        - password
     PostProperties:
-      title: Post
       type: object
+      title: Post
       description: Posting describes an item to be sold in the marketplace
       x-examples:
         basic:
@@ -532,6 +615,7 @@ components:
             street: Testaajantie 123
           imageUrls:
             - www.jikaheimo.software/api/products/1/images/1.png
+      additionalProperties: false
       properties:
         id:
           type: string
@@ -577,6 +661,7 @@ components:
           required:
             - shipping
             - pickup
+          additionalProperties: false
           properties:
             shipping:
               type: boolean
@@ -605,8 +690,8 @@ components:
         - askingPrice
         - deliveryType
     LocationProperties:
-      title: Location
       type: object
+      title: Location
       x-examples:
         basic:
           city: Oulu
@@ -614,6 +699,7 @@ components:
           postalCode: 90550
           street: Testaajantie 123
       description: Location specific information used to locate an user or post.
+      additionalProperties: false
       properties:
         city:
           type: string
@@ -637,9 +723,14 @@ components:
         - postalCode
         - street
     LoginProperties:
-      title: Login
       type: object
+      title: Login
       description: Properties needed to login an user.
+      x-examples:
+        basic:
+          username: Testaaja
+          password: testaaja123
+      additionalProperties: false
       properties:
         username:
           type: string
@@ -653,10 +744,6 @@ components:
       required:
         - username
         - password
-      x-examples:
-        basic:
-          username: Testaaja
-          password: testaaja123
     ErrorMessage:
       type: object
       title: ErrorMessage
@@ -664,23 +751,32 @@ components:
       x-examples:
         '401':
           message: Unauthorized
+        '403':
+          message: Access forbidden
         '404':
-          message: Post was not found
+          message: Not found
         5xx:
-          message: Something went wrong
+          message: 'Something went wrong :('
+      additionalProperties: false
       properties:
         message:
           type: string
           description: Message describing the cause of error.
-          example: Something went wrong
+          example: 'Something went wrong :('
           readOnly: true
       required:
         - message
       readOnly: true
     SellerProperties:
-      title: Seller
       type: object
-      description: Seller specific properties.
+      title: Seller
+      description: Contact information of product seller.
+      x-examples:
+        basic:
+          email: testaaja123@test.com
+          phoneNumber: '+358401231231'
+          username: Testaaja123
+      additionalProperties: false
       properties:
         email:
           type: string
@@ -698,12 +794,33 @@ components:
           description: The username of the seller.
           example: Testaaja123
           readOnly: true
+      required:
+        - email
+        - phoneNumber
+        - username
+    BearerToken:
+      type: string
+      title: BearerToken
+      description: User authentication token.
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RhYWphMzQ1IiwiaWQiOiI2MDMwMTUzYjI0MjIyNjM1NjhlZWJlZjYiLCJpYXQiOjE2MTM3NjM5MTR9.Z1vBx763s23IxDPP7DpRo1KyYkZndOzLcqazDWqdymE
       x-examples:
-        basic:
-          email: testaaja123@test.com
-          phoneNumber: '+358401231231'
-          username: Testaaja123
-  parameters: {}
+        default: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RhYWphMzQ1IiwiaWQiOiI2MDMwMTUzYjI0MjIyNjM1NjhlZWJlZjYiLCJpYXQiOjE2MTM3NjM5MTR9.Z1vBx763s23IxDPP7DpRo1KyYkZndOzLcqazDWqdymE
+  parameters:
+    Bearer:
+      name: Authorization
+      in: header
+      schema:
+        type: string
+        example: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc3RhYWphMzQ1IiwiaWQiOiI2MDMwMTUzYjI0MjIyNjM1NjhlZWJlZjYiLCJpYXQiOjE2MTM3NjM5MTR9.Z1vBx763s23IxDPP7DpRo1KyYkZndOzLcqazDWqdymE
+      description: User specific bearer token.
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 601bbdac90a0dd3538d6ac49
+      description: Unique resource identifier.
   responses:
     '400':
       description: Typical response for response code 400 (Bad Request).
@@ -712,9 +829,12 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            basic:
+            Invalid id:
               value:
-                message: Invalid data
+                message: Malformatted id
+            Invalid body:
+              value:
+                message: Invalid request body
     '401':
       description: Typical response for response code 401 (Unauthorized). User has not been authenticated yet.
       content:
@@ -722,7 +842,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            basic:
+            default:
               value:
                 message: Unauthorized
     '403':
@@ -732,9 +852,9 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            basic:
+            default:
               value:
-                message: Access not allowed
+                message: Access Forbidden
     '404':
       description: Typical response for response code 404 (Not Found). Typically occurs when requesting a resource with an id that does not exist.
       content:
@@ -742,9 +862,9 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            basic:
+            default:
               value:
-                message: Requested resource not found
+                message: Not Found
     '409':
       description: Typical response for response code 409 (Conflict).
       content:
@@ -765,7 +885,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            basic:
+            default:
               value:
                 message: 'Something went wrong :('
     Posts:
@@ -777,7 +897,7 @@ components:
             items:
               $ref: '#/components/schemas/PostProperties'
           examples:
-            basic:
+            default:
               value:
                 - id: 5099803df3f4948bd2f98391
                   description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed vestibulum justo. Pellentesque orci eros, convallis fringilla velit at, consequat volutpat urna. Mauris nec dui sapien. Praesent at mattis urna. Aenean pellentesque placerat vulputate. Aliquam vel orci aliquam magna pretium viverra ullamcorper bibendum metus. Maecenas eu nisl interdum, lacinia ipsum vel, tempus velit. Etiam efficitur aliquet justo. Morbi rutrum malesuada dui nec vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed porttitor molestie augue placerat rhoncus. Morbi eu nisl id urna aliquet vestibulum sed semper metus. Suspendisse tempus lorem lacus, non fringilla est sodales at. Maecenas congue facilisis erat, vel vestibulum justo scelerisque sed. Donec vel aliquet ante, a varius purus. Nam tempor pellentesque lorem, eu convallis magna fringilla sit amet.'
@@ -807,6 +927,7 @@ components:
           schema:
             type: object
             properties: {}
+      headers: {}
     Post:
       description: Example response
       content:
@@ -814,7 +935,7 @@ components:
           schema:
             $ref: '#/components/schemas/PostProperties'
           examples:
-            basic:
+            default:
               value:
                 id: 5099803df3f4948bd2f98391
                 description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed vestibulum justo. Pellentesque orci eros, convallis fringilla velit at, consequat volutpat urna. Mauris nec dui sapien. Praesent at mattis urna. Aenean pellentesque placerat vulputate. Aliquam vel orci aliquam magna pretium viverra ullamcorper bibendum metus. Maecenas eu nisl interdum, lacinia ipsum vel, tempus velit. Etiam efficitur aliquet justo. Morbi rutrum malesuada dui nec vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed porttitor molestie augue placerat rhoncus. Morbi eu nisl id urna aliquet vestibulum sed semper metus. Suspendisse tempus lorem lacus, non fringilla est sodales at. Maecenas congue facilisis erat, vel vestibulum justo scelerisque sed. Donec vel aliquet ante, a varius purus. Nam tempor pellentesque lorem, eu convallis magna fringilla sit amet.'
@@ -836,8 +957,25 @@ components:
                   street: Testaajantie 123
                 imageUrls:
                   - www.jikaheimo.software/api/products/1/images/1.png
+    Images:
+      description: Response that returns a list of image URLs.
+      content:
+        application/json:
+          schema:
+            type: array
+            description: Array of image URLs.
+            items:
+              type: string
+          examples:
+            example-1:
+              value:
+                - 'http://localhost:3000/api/images/3312576856487e155c5e899f0b1e6f53.png'
+                - 'http://localhost:3000/api/images/63964099b464e9305c917d9758858c37.png'
+                - 'http://localhost:3000/api/images/81abc0411cca45be2d060f0b9e635589.png'
+                - 'http://localhost:3000/api/images/fd8854bf3b964e5711fa4eb93794f3b9.png'
   securitySchemes:
     JSONWebToken:
       type: http
       scheme: bearer
       description: ''
+  examples: {}
