@@ -588,7 +588,6 @@ components:
         - username
         - address
         - phoneNumber
-        - password
     PostProperties:
       type: object
       title: Post
