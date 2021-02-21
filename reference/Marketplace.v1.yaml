@@ -46,7 +46,7 @@ paths:
                   - user
                   - token
               examples:
-                example-1:
+                default:
                   value:
                     user:
                       id: 5099803df3f4948bd2f98391
@@ -740,7 +740,7 @@ components:
           description: The country of the location.
           example: Finland
         postalCode:
-          type: number
+          type: string
           example: 90550
           description: The postal code of the location.
         street:
