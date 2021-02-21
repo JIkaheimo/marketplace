@@ -123,14 +123,12 @@ paths:
                       street: Testaajantie 123
                     imageUrls:
                       - www.jikaheimo.software/api/products/1/images/1.png
-        '400':
-          $ref: '#/components/responses/400'
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
       operationId: display-post
-      description: Displays a post with the given id.
+      description: Displays/fetches a post with the given id.
     put:
       summary: Modify a post
       operationId: modify-post
@@ -200,7 +198,7 @@ paths:
       operationId: delete-post
       responses:
         '204':
-          description: Post was found and deleted.
+          description: Post was found and sucessfully deleted.
           headers: {}
         '400':
           $ref: '#/components/responses/400'
@@ -223,7 +221,7 @@ paths:
       operationId: login-user
       responses:
         '200':
-          description: Token and the user information of the authenticated user.
+          description: User was successfully authenticated. Response will return the bearer access token and the user information of the authenticated user.
           content:
             application/json:
               schema:
@@ -257,6 +255,8 @@ paths:
               schema:
                 type: object
                 properties: {}
+        '400':
+          $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
         '500':
@@ -268,7 +268,7 @@ paths:
             schema:
               $ref: '#/components/schemas/LoginProperties'
             examples:
-              basic:
+              default:
                 value:
                   username: Testaaja
                   password: testaaja123
@@ -489,7 +489,7 @@ paths:
           $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
-      description: 'Replaces and updates post specific images with the provided ones (max 4). Also returns the corresponding API paths of the uploaded image. The user must be authenticated and authorized to updload images. '
+      description: 'Replaces and updates post specific images with the provided ones (max 4). Also returns the corresponding API paths of the uploaded image. The user must be authenticated and authorized to upload images. '
       security:
         - JSONWebToken: []
       requestBody:
@@ -531,7 +531,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
       operationId: display-images
-      description: Returns path of all the images.
+      description: Returns path of every stored post image.
   '/api/images/{name}':
     parameters:
       - schema:
@@ -565,7 +565,7 @@ components:
       title: User
       description: 'User of the marketplace, in this case the seller (or buyer) of products posted.'
       x-examples:
-        basic:
+        default:
           id: 5099803df3f4948bd2f98391
           email: testaaja123@test.com
           creationDate: '2020-01-01'
@@ -729,7 +729,7 @@ components:
           country: Finland
           postalCode: '90550'
           street: Testaajantie 123
-      description: Location specific information used to locate an user or post.
+      description: Contains location identifying information to locate an user/post.
       additionalProperties: false
       properties:
         city:
@@ -756,7 +756,7 @@ components:
     LoginProperties:
       type: object
       title: Login
-      description: Properties needed to login an user.
+      description: Credentials required to authenticate an user.
       x-examples:
         basic:
           username: Testaaja
@@ -765,13 +765,15 @@ components:
       properties:
         username:
           type: string
-          description: Username used to login.
+          description: Username used for authentication.
           example: Testaaja
+          writeOnly: true
         password:
           type: string
-          description: Password used to login
+          description: Password used for authentication.
           format: password
           example: testaaja123
+          writeOnly: true
       required:
         - username
         - password
@@ -801,7 +803,7 @@ components:
     SellerProperties:
       type: object
       title: Seller
-      description: Product seller contact information.
+      description: Contact information used to identify and react a product seller.
       x-examples:
         basic:
           email: testaaja123@test.com
@@ -854,20 +856,17 @@ components:
       description: Unique resource identifier.
   responses:
     '400':
-      description: Typical response for response code 400 (Bad Request).
+      description: 'Typical response for response code 400 (Bad Request). This response can occur if data provided within the request body is in unsupported format, has extra fields or contains invalid data types.'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            Invalid id:
-              value:
-                message: Malformatted id
-            Invalid body:
+            default:
               value:
                 message: Invalid request body
     '401':
-      description: Typical response for response code 401 (Unauthorized). User has not been authenticated yet.
+      description: Typical response for response code 401 (Unauthorized). User is trying to access a resource which requires authentication and has not been authenticated yet. Also occurs if the user provides invalid login credentials.
       content:
         application/json:
           schema:
@@ -887,7 +886,7 @@ components:
               value:
                 message: Access Forbidden
     '404':
-      description: Typical response for response code 404 (Not Found). Typically occurs when requesting a resource with an id that does not exist.
+      description: Typical response for response code 404 (Not Found). Typically occurs when requesting a resource with an id that does not exist. Might also occur if the requested path does not exist.
       content:
         application/json:
           schema:
@@ -897,7 +896,7 @@ components:
               value:
                 message: Not Found
     '409':
-      description: Typical response for response code 409 (Conflict).
+      description: Typical response for response code 409 (Conflict). Typically occurs when trying to create an user with conflicting login credentials.
       content:
         application/json:
           schema:
