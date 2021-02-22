@@ -435,10 +435,10 @@ paths:
         Performs a search query for posts based on given parameters.
 
         Available query parameters:
-        * country filters posts by country.
-        * city filters posts by city.
-        * posted filters posts by date posted.
-        * category filters posts by category.
+        * country  - filters posts by country.
+        * city     - filters posts by city.
+        * posted   - filters posts by date posted.
+        * category - filters posts by category.
       parameters: []
       requestBody:
         content:
@@ -491,6 +491,8 @@ paths:
           $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
       description: |-
         Replaces and updates post specific images with the provided ones (max 4). Also returns the corresponding API paths of the uploaded image. 
         The user must be authenticated and authorized to upload images. 
