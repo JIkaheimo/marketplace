@@ -8,16 +8,18 @@ info:
     Related Course
     Building Cloud Integration, spring 2021
 
-    Design and Development
-    - Jaakko Ikäheimo
-    - Konsta Holm
+    Design and Development: Jaakko Ikäheimo, Konsta Holm
 
     This API implements the following functional requirements:
     - User registration and login. 
     - Post creation for authenticated users.
     - Post modification for authenticated users.
     - Post deletion for authenticated users.
-    - Post browsing for all the users.
+    - Post browsing/searching for all the users.
+    - Post image upload for authenticated users.
+    - Image browsing.
+  contact:
+    name: Jaakko Ikäheimo
 servers:
   - url: 'http://localhost:3000'
     description: Dev
@@ -172,7 +174,7 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-      description: Modifies a post with the given id.
+      description: Modifies a post with the given id. To modify a post user has to be authenticated and authorized.
       security:
         - JSONWebToken: []
       requestBody:
@@ -558,8 +560,10 @@ paths:
                   value: string
         '404':
           $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
       operationId: display-image
-      description: Returns an image with the specified name/path.
+      description: Returns an image with the specified name/identifier.
 components:
   schemas:
     UserProperties:
@@ -1010,5 +1014,5 @@ components:
     JSONWebToken:
       type: http
       scheme: bearer
-      description: ''
+      description: JSON webtoken bearer authentication
   examples: {}
