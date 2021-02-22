@@ -489,7 +489,9 @@ paths:
           $ref: '#/components/responses/403'
         '404':
           $ref: '#/components/responses/404'
-      description: 'Replaces and updates post specific images with the provided ones (max 4). Also returns the corresponding API paths of the uploaded image. The user must be authenticated and authorized to upload images. '
+      description: |-
+        Replaces and updates post specific images with the provided ones (max 4). Also returns the corresponding API paths of the uploaded image. 
+        The user must be authenticated and authorized to upload images. 
       security:
         - JSONWebToken: []
       requestBody:
