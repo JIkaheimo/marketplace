@@ -515,9 +515,7 @@ paths:
                   writeOnly: true
               required:
                 - filename
-            examples:
-              default:
-                value: {}
+            examples: {}
         description: The image files to upload with the image.
       parameters: []
   /api/images:
