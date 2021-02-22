@@ -501,6 +501,7 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              additionalProperties: false
               properties:
                 filename:
                   type: array
@@ -510,8 +511,13 @@ paths:
                   items:
                     type: string
                     format: binary
+                    example: '[http://127.0.0.1:60740/api/images/imagesTest/3f0901e19d3ff29545af0c798925ddb2.png, http://127.0.0.1:60740/api/images/imagesTest/3f0901e19d3ff29545af0c798925asd2.png]'
                   writeOnly: true
-            examples: {}
+              required:
+                - filename
+            examples:
+              default:
+                value: {}
         description: The image files to upload with the image.
       parameters: []
   /api/images:
@@ -549,9 +555,9 @@ paths:
       tags: []
       responses:
         '200':
-          description: OK
+          description: Image file corresponding to the given identifier.
           content:
-            image/png:
+            image/*:
               schema:
                 type: string
                 format: binary
@@ -574,14 +580,27 @@ components:
         default:
           id: 5099803df3f4948bd2f98391
           email: testaaja123@test.com
+          birthDate: '1997-10-31'
           creationDate: '2020-01-01'
           username: Testaaja123
           address:
             city: Oulu
             country: Finland
-            postalCode: 90550
+            postalCode: '90550'
             street: Testaajantie 123
           phoneNumber: '+358401231231'
+        Example 2:
+          id: 5099803df3f4948bd2f32111
+          email: akuankka78@test.com
+          birthDate: '1930-10-31'
+          creationDate: '2020-01-01'
+          username: AkuAnkka78
+          address:
+            city: Ankkalinna
+            country: Ankkala
+            postalCode: '313'
+            street: Ankkalinnantie 123
+          phoneNumber: '+3581232310213'
       properties:
         id:
           type: string
@@ -631,7 +650,7 @@ components:
       title: Post
       description: Post describes an item to be listed/sold in the marketplace
       x-examples:
-        basic:
+        default:
           id: 5099803df3f4948bd2f98391
           description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sed vestibulum justo. Pellentesque orci eros, convallis fringilla velit at, consequat volutpat urna. Mauris nec dui sapien. Praesent at mattis urna. Aenean pellentesque placerat vulputate. Aliquam vel orci aliquam magna pretium viverra ullamcorper bibendum metus. Maecenas eu nisl interdum, lacinia ipsum vel, tempus velit. Etiam efficitur aliquet justo. Morbi rutrum malesuada dui nec vulputate. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed porttitor molestie augue placerat rhoncus. Morbi eu nisl id urna aliquet vestibulum sed semper metus. Suspendisse tempus lorem lacus, non fringilla est sodales at. Maecenas congue facilisis erat, vel vestibulum justo scelerisque sed. Donec vel aliquet ante, a varius purus. Nam tempor pellentesque lorem, eu convallis magna fringilla sit amet.'
           title: Factory New Audi A4
@@ -764,7 +783,7 @@ components:
       title: Login
       description: Credentials required to authenticate an user.
       x-examples:
-        basic:
+        default:
           username: Testaaja
           password: testaaja123
       additionalProperties: false
@@ -796,12 +815,19 @@ components:
           message: Not found
         5xx:
           message: 'Something went wrong :('
+        WithDescription:
+          message: 'Something went wrong :('
+          description: More specific description about the error (optional).
       additionalProperties: false
       properties:
         message:
           type: string
           description: Message describing the cause of error.
           example: 'Something went wrong :('
+          readOnly: true
+        description:
+          type: string
+          example: More specific description about the error (optional).
           readOnly: true
       required:
         - message
@@ -811,7 +837,11 @@ components:
       title: Seller
       description: Contact information used to identify and react a product seller.
       x-examples:
-        basic:
+        default:
+          email: akuankka78@test.com
+          phoneNumber: '+358404891231'
+          username: AkuAnkka78
+        Example 2:
           email: testaaja123@test.com
           phoneNumber: '+358401231231'
           username: Testaaja123
