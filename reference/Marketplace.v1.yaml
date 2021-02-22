@@ -315,7 +315,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
       operationId: display-posts
-      description: Displays paged posts.
+      description: Fetches and displays posts. By default uses paging where the limit is 20 and offset 0.
       parameters:
         - schema:
             type: number
@@ -374,7 +374,7 @@ paths:
           $ref: '#/components/responses/401'
         '500':
           $ref: '#/components/responses/500'
-      description: Creates a new post.
+      description: Creates a new post. To create a new post user must be authenticated.
       security:
         - JSONWebToken: []
       requestBody:
@@ -393,6 +393,8 @@ paths:
                     shipping: true
                     pickup: true
         description: Required data in correct format to create a new post.
+      parameters:
+        - $ref: '#/components/parameters/Bearer'
   /api/posts/search:
     post:
       summary: Search posts
@@ -432,7 +434,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
       description: |-
-        Performs a search query for posts based on given parameters.
+        Performs a search query for posts based on given parameters. If no search parameters is provided, returns an empty array. 
 
         Available query parameters:
         * country  - filters posts by country.
@@ -469,10 +471,14 @@ paths:
                   writeOnly: true
               writeOnly: true
             examples:
-              cars:
+              default:
                 value:
                   category: cars
-        description: ''
+              Example 2:
+                value:
+                  country: Finland
+                  category: drinks
+        description: Body with different filters
     parameters: []
   '/api/posts/{id}/upload':
     parameters:
@@ -519,7 +525,8 @@ paths:
                 - filename
             examples: {}
         description: The image files to upload with the image.
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Bearer'
   /api/images:
     get:
       summary: Your GET endpoint
@@ -890,6 +897,12 @@ components:
         type: string
         example: 601bbdac90a0dd3538d6ac49
       description: Unique resource identifier.
+    Offset:
+      name: offset
+      in: query
+      required: false
+      schema:
+        type: string
   responses:
     '400':
       description: 'Typical response for response code 400 (Bad Request). This response can occur if data provided within the request body is in unsupported format, has extra fields or contains invalid data types.'
