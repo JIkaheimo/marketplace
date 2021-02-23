@@ -117,7 +117,7 @@ paths:
                     title: Factory New Audi A4
                     category: cars
                     askingPrice: 20000
-                    posted: '2019-08-24T14:15:22Z'
+                    posted: '2019-08-24'
                     deliveryType:
                       shipping: true
                       pickup: true
@@ -161,7 +161,7 @@ paths:
                     title: Factory New Audi A4
                     category: cars
                     askingPrice: 20000
-                    posted: '2019-08-24T14:15:22Z'
+                    posted: '2019-08-24'
                     deliveryType:
                       shipping: true
                       pickup: true
@@ -207,7 +207,7 @@ paths:
                   title: Factory New Audi A4
                   category: cars
                   askingPrice: 20000
-                  posted: '2019-08-24T14:15:22Z'
+                  posted: '2019-08-24'
                   deliveryType:
                     shipping: true
                     pickup: true
@@ -338,7 +338,7 @@ paths:
                       title: Factory New Audi A4
                       category: cars
                       askingPrice: 20000
-                      posted: '2019-08-24T14:15:22Z'
+                      posted: '2019-08-24'
                       deliveryType:
                         shipping: true
                         pickup: true
@@ -397,7 +397,7 @@ paths:
                     title: Factory New Audi A4
                     category: cars
                     askingPrice: 20000
-                    posted: '2019-08-24T14:15:22Z'
+                    posted: '2019-08-24'
                     deliveryType:
                       shipping: true
                       pickup: true
@@ -465,7 +465,7 @@ paths:
                       title: Factory New Audi A4
                       category: cars
                       askingPrice: 20000
-                      posted: '2019-08-24T14:15:22Z'
+                      posted: '2019-08-24'
                       deliveryType:
                         shipping: true
                         pickup: true
@@ -786,9 +786,9 @@ components:
           example: 20000
         posted:
           type: string
-          format: date-time
+          format: date
           description: Server generated datestamp when the post was created.
-          example: '2019-08-24T14:15:22Z'
+          example: '2019-08-24'
           readOnly: true
         deliveryType:
           type: object
@@ -1056,7 +1056,7 @@ components:
                   title: Factory New Audi A4
                   category: cars
                   askingPrice: 20000
-                  posted: '2019-08-24T14:15:22Z'
+                  posted: '2019-08-24'
                   deliveryType:
                     shipping: true
                     pickup: true
@@ -1094,7 +1094,7 @@ components:
                 title: Factory New Audi A4
                 category: cars
                 askingPrice: 20000
-                posted: '2019-08-24T14:15:22Z'
+                posted: '2019-08-24'
                 deliveryType:
                   shipping: true
                   pickup: true
