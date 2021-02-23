@@ -812,7 +812,7 @@ components:
     ErrorMessage:
       type: object
       title: ErrorMessage
-      description: Typical message returned when either 4xx or 5xx error occurs.
+      description: Typical respone body returned when either 4xx or 5xx error occurs.
       x-examples:
         '401':
           message: Unauthorized
@@ -829,12 +829,13 @@ components:
       properties:
         message:
           type: string
-          description: Message describing the cause of error.
+          description: Simple message describing the cause of the error.
           example: 'Something went wrong :('
           readOnly: true
-        description:
+        detail:
           type: string
           example: More specific description about the error (optional).
+          description: More specific description about the error.
           readOnly: true
       required:
         - message
